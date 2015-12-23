@@ -28,8 +28,10 @@ shinyUI(pageWithSidebar(
                                  averages for mean and variance is very close to theoretical mean and 
                                  variance and also the distribution of sample averages is fairly normal."),
                           tags$p("For further documentation of the app "),
-                          tags$a(href="http://rpubs.com/rumyd/136733", "Click Here!")
-                 )
+                          tags$a(href="http://rpubs.com/rumyd/136733", "Click Here!"),
+                          tags$p("For ui and server code on GitHub "),
+                          tags$a(href="https://github.com/rumyd/DataProducts", "Click Here!")
+                          )
                  ),
     
     mainPanel(

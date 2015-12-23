@@ -2,6 +2,6 @@ name: ShinyProject
 account: rumyd
 server: shinyapps.io
 appId: 75084
-bundleId: 337840
+bundleId: 337866
 url: https://rumyd.shinyapps.io/ShinyProject
-when: 1450910915.02762
+when: 1450913406.85295
