@@ -1,0 +1,103 @@
+Central Limit Theorem Demo
+========================================================
+author: Rumy Dukandar
+date: `r format(Sys.Date(), format= "%B %d %Y") `
+transition: rotate
+
+<small> 
+Johns Hopkins University   
+Coursera Data Science Specialization
+</small>
+
+Central Limit Theorem: What does it mean?
+========================================================
+
+<small> 
+This document tries to explain the shiny [demo](https://rumyd.shinyapps.io/ShinyProject) for an important concept of Central Limit Theorem in Statistics which states that the sampling distribution of the sampling means approaches a normal distribution as the sample size gets larger - no matter what the shape of the population distribution.
+
+If random samples, each of size n, are taken from (nearly) any population with a mean MU and a standard deviation SIGMA , the sampling distribution of the sample means (averages) will:
+
+1.	Have True Mean (Mean of Sample mean values) = Population Mean
+2.	Have Standard Deviation (of the distribution of Sample Mean) equal to the standard error 
+</small>
+
+
+CLT Demo Setup
+========================================================
+
+<small>
+We will demonstrate CLT using randomly generated exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution will be generated in R and number of simulations and sample
+size for deriving averages, will be input by the user. Lambda (rate paratmeter) for demo purpose is fixed at 0.2.
+
+The goal is to plot the distribution of averages and compare the same to theoretical mean and variance.
+</small>
+
+User Interface for CLT Demo 
+===
+
+<small>
+In the shiny [demo](https://rumyd.shinyapps.io/ShinyProject), user select values for 
+sample size (value between 20 to 60) and number of simulationns (value between 600 to  2000)
+The interface with user input widgets and the graphical and tabular output looks as per the figure below
+
+<img src="CentralLimitTheoremDemo-figure/CLTDemo.png" width="750px" height="500px" alt="CLT Demo" />
+
+</small>
+
+
+CLT Live Demo Output as a plot
+========================================================
+
+<small>
+Plot shown below is generated live for 1000 simulations each with sample size of 40, the rate parameter lambda being constant at 0.2. The difference in theoretical mean (1/lambda) and mean of sample averages is negligible and the ditribution of sample averages is fairly normal.
+</small>
+
+```{r, echo=FALSE, out.width = '600px', fig.width = 10, fig.height = 6}
+library("ggplot2")
+suppressPackageStartupMessages(library("ggplot2"))
+# Set the parameters
+    lambda <- 0.2    # Rate parameter for exponential distribution
+    no_sims <- 1000  # no. of simulations for study
+    n <- 40          # sample size
+    set.seed(245)
+
+# generate a distribution of 1000 random exponentials with rate 0.2
+    rnexp <- rexp(1000, 0.2)
+
+# Use replicate function to create a dataset with 1000 rows and 40 columns representing random     draw # of 40 samples of random exponentials and repeating this simulation 1000 times
+
+    smexp <- t(replicate(no_sims, rexp(n, lambda)))
+
+# Get the mean and variance of the samples (size =40) for each of the 1000 simulations and   # store it
+
+    smean <- data.frame(Mean = apply(smexp, 1, mean))
+    svar <- data.frame(Variance = apply(smexp, 1, var))
+
+# Calculate the averages of both means and variances of the samples(size = 40) from 1000     # simulations and store it #in a variable along with theoretical mean and var. of exp.       # distribution
+
+    smeanvar <- data.frame(Mean = c(mean(rowMeans(smexp)), 1/lambda), 
+                Variance = c(mean(apply(smexp, 1, var)), 1/lambda^2))
+
+    rownames(smeanvar) <-  c("Sample", "Theoretical")
+    
+    gmean <- ggplot(smean, aes(x = Mean))
+    gmean <- gmean + geom_histogram(color="black", fill = "lightblue3", binwidth=lambda,  
+            aes(y = ..density..))
+    gmean <- gmean + geom_density(color = "black", size = 1) 
+    gmean <- gmean + geom_vline(aes(xintercept = smeanvar[2,1],
+                                    color = "Average of Sample Means", 
+                                    linetype = "Average of Sample Means"), 
+                                size = .5, show_guide = TRUE)
+    gmean <- gmean + geom_vline(aes(xintercept = smeanvar[2,1], 
+                                    color = "Theoretical Mean",
+                                    linetype = "Theoretical Mean"), 
+                                size = .5, show_guide = TRUE)
+    gmean <- gmean + scale_colour_manual( name = "Means", 
+                values=c("Average of Sample Means"="black","Theoretical Mean"= "orange" )) 
+    gmean <- gmean + scale_linetype_manual( name = " Means", 
+            values=c("Average of Sample Means"="solid","Theoretical Mean"= "dashed" ), 
+            guide = FALSE)
+    gmean <- gmean + ylab("Density") + xlab("Sample Means") + ggtitle("Distribution of Sample Means")
+    
+    gmean
+```
